@@ -1,0 +1,234 @@
+<!doctype html>
+<!--Bhaskar Tiwari-->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Web Editor</title>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.4.6/mousetrap.min.js"></script>
+</head>
+    <body>
+        <div>
+            
+            <button class="btn btn-success" id="run"style="float:right;margin-right:10px;">Run</button>
+           <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Added Dependencies</button>
+              <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: black;border:1px solid #fff">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Enter the JS files</h4>
+        </div>
+        <div class="modal-body" style="color:#000">
+         <div class="form-group">
+            <label for="usr">CDN:</label>
+            <input type="text" class="form-control cdn">
+
+        </div>
+        </div>
+        <div class="modal-footer">
+
+            <button type="button" class="btn btn-default" id="save" data-dismiss="modal" >Save</button>
+              <button type="button" class="btn btn-default" id="addmore"  >Add More</button>  
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        
+          
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+        </div>
+        <table>
+            <tr>
+                <td>
+                    <div class="tag">HTML (Body)</div>
+                    <div id="html" class="content" contenteditable></div>
+                </td>
+                <td>
+                    <div class="tag">CSS</div>
+                    <div id="css" class="content" contenteditable></div>
+                </td>
+                <td>
+                    <div class="tag">JavaScript</div>
+                    <div id="js" class="content" contenteditable></div>
+                </td>
+            </tr>
+           
+        </table>
+          
+                    <div class="output-tag">Output</div>
+                    <iframe id="output"></iframe>
+                     
+                       <script src="col-resizable.js"></script>
+                    <script>
+                    $(document).ready(function(){
+                    $(function(){
+                        $("table").colResizable();
+                    });
+
+                  
+                      var fullScriptList='';
+                     var html = '<html><body>Hello</body></html>';
+                     $('#html').text(html);
+                      var html=document.getElementById("html"),
+                        css=document.getElementById("css"),
+                        js=document.getElementById("js"),
+                        output=document.getElementById("output"),
+                        working=false,
+                        fill=function(){
+                            if(working){
+                                return false;
+                            }
+                            working=true;
+                            var document=output.contentDocument,
+                            style=document.createElement("style"),
+                            script=document.createElement("script");
+                            script2 = document.createElement("script");
+                            script2.innerHTML = fullScriptList;
+
+                            document.body.innerHTML=html.textContent;
+                            style.innerHTML=css.textContent.replace(/\s/g,"");
+                            script.innerHTML=js.textContent;
+                            document.body.appendChild(style);
+                            document.head.appendChild(script2);
+                            document.head.appendChild(script);
+                            working=false;
+                        };
+
+                        $('#run').click(function(){
+                           fill();
+                        });
+                     
+                        $('#addmore').click(function(){
+                            $('.modal-body').append(' <div class="form-group"><label for="usr">CDN:</label><input type="text" class="form-control cdn"></div>');
+                        });
+                      
+                        $('#save').click(function(){
+                                $('.cdn').each(function(i,e) { 
+                                var cdnlink = $(this).val();
+                            
+                                $.get(cdnlink,function(data,status){
+                                     fullScriptList +=data;  
+                                });
+                                 });
+                                
+                        });
+                          Mousetrap.bind('ctrl+b', function(e) {
+                        fill();
+                        console.log(e);
+                    });
+                        });
+                    </script
+    </body>
+</html>
+
+
+<style>
+html,body,div.content,iframe{
+    border:0;
+    height:100vh;
+    margin:0;
+    padding:0;
+    width:100%;
+    resize: both;
+    background-color:  #333333;
+    color:aliceblue;
+    font-size:18px;
+  
+}
+table{
+   
+    width: 100%;
+   position: relative;
+   height: 50vh;
+}
+td{
+    border:2px solid black;
+    height:50vh;
+    padding:25px 5px 5px 5px;
+    position:relative;
+    vertical-align:top;
+    width:30%;
+    min-width: 50px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+.tag{
+    position:absolute;
+    right:5px;
+    top:5px;
+    background-color: black;    
+
+   
+}
+.output-tag{
+    width: 100%;
+  
+}
+#output{
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #fff;
+
+}
+#html, #css,#js{
+    padding-left:10px;
+}
+div.content{
+    border:1px solid black;
+    height: 50vh;
+    overflow-y: auto;
+}
+div.content:focus{
+   outline-color: cyan;
+}
+
+#html::-webkit-scrollbar {
+    width: 0.5em;
+}
+ 
+#html::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+#html::-webkit-scrollbar-thumb {
+  background-color:  black;
+  outline: 1px solid black;
+  border-radius: 20px;
+}
+
+#css::-webkit-scrollbar {
+    width: 0.5em;
+}
+ 
+#css::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+#css::-webkit-scrollbar-thumb {
+  background-color:  black;
+  outline: 1px solid black;
+  border-radius: 20px;
+}
+
+#js::-webkit-scrollbar {
+    width: 0.5em;
+}
+ 
+#js::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+#js::-webkit-scrollbar-thumb {
+  background-color:  black;
+  outline: 1px solid black;
+  border-radius: 20px;
+}
+
+</style>
